@@ -1,0 +1,18 @@
+create database acmr;
+use acmr;
+create table CadastroUsuarios(
+    id int not null auto_increment,
+    nome varchar(200) not null,
+    email varchar(200) not null,
+    senha varchar(50) not null,
+    primary key(id)
+    );
+create table disciplinas(
+	id int not null auto_increment,
+    disciplina varchar(200) not null,
+    assunto varchar(200) not null,
+    dataCdastro varchar(50) not null,
+    linkPDF varchar(500),
+    primary key(id)
+
+);
