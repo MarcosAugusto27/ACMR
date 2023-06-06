@@ -1,31 +1,26 @@
 package views;
 
 import java.awt.EventQueue;
-
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-
-import model.RepositorioConexao;
-
+import controller.ConsultasSql;
+import controller.TrocarTelas;
 import java.awt.Color;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-
 import java.awt.Font;
 import javax.swing.JTextField;
 import javax.swing.JButton;
 import javax.swing.JPasswordField;
 import java.awt.event.ActionListener;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.awt.event.ActionEvent;
 import javax.swing.ImageIcon;
 
 public class TelaLogin extends JFrame {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private JTextField tfEmail;
 	private JPasswordField pfSenha;
@@ -91,32 +86,14 @@ public class TelaLogin extends JFrame {
 		btnEntrar1.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		btnEntrar1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-		
-				try {
-					Connection con= RepositorioConexao.conectaBD();
-					String sql="select * from CadastroUsuarios where email=? and senha=?";
-					PreparedStatement stmt = con.prepareStatement(sql);
-					stmt.setString(1,tfEmail.getText());
-					stmt.setString(2,new String(pfSenha.getPassword()));
-					ResultSet rs = stmt.executeQuery();
-					
-					if(rs.next()) {
-					
-						TelaCurso principal = new TelaCurso();
-						principal.setVisible(true);
-						
-						setVisible(false);
-					}else {
-						JOptionPane.showMessageDialog(null, "Email ou senha incorreto");
-					}
-					stmt.close();
-					con.close(); 
-					pfSenha.setText("");
-					tfEmail.setText("");
-				}catch (SQLException e1) {
-					e1.printStackTrace();
+				ConsultasSql consulta = new ConsultasSql();
+				consulta.buscaUsuario(tfEmail, pfSenha);
+				if(consulta.getPassaTela() == true) {
+					setVisible(false);
 				}
-			
+				tfEmail.setText("");
+				pfSenha.setText("");
+				
 			}
 		});
 		btnEntrar1.setForeground(new Color(13, 20, 89));
@@ -128,8 +105,8 @@ public class TelaLogin extends JFrame {
 		btnVoltar.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		btnVoltar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				TelaHomePrincipal inicio =new TelaHomePrincipal();
-				inicio.setVisible(true);
+				TrocarTelas trocar =new TrocarTelas();
+				trocar.telaHome();
 				setVisible(false);
 				
 			}
@@ -139,6 +116,13 @@ public class TelaLogin extends JFrame {
 		miniJanela3.add(btnVoltar);
 		
 		JButton btnEsqueceuSenha = new JButton("Esqueceu a senha?");
+		btnEsqueceuSenha.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				TrocarTelas trocar =new TrocarTelas();
+				trocar.telaEsqueciSenha();
+				setVisible(false);
+			}
+		});
 		btnEsqueceuSenha.setFont(new Font("Tahoma", Font.PLAIN, 14));
 		btnEsqueceuSenha.setBackground(new Color(255, 255, 255));
 		btnEsqueceuSenha.setForeground(new Color(13, 20, 89));

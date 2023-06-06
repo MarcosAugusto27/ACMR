@@ -3,18 +3,14 @@ package views;
 import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-
-import model.AlunoRepositorio;
 import java.awt.Color;
 import javax.swing.JLabel;
 import java.awt.Font;
 import javax.swing.JTextField;
-
-import controller.MoldeAlunoController;
-
+import controller.ConsultasSql;
+import controller.TrocarTelas;
 import javax.swing.JButton;
 import javax.swing.JPasswordField;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.ImageIcon;
@@ -22,6 +18,10 @@ import javax.swing.ImageIcon;
 
 public class TelaCadastro extends JFrame {
 
+		/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 		private JPanel contentPane;
 		private JTextField txtNomeCompleto;
 		private JTextField tf_Email;
@@ -110,13 +110,13 @@ public class TelaCadastro extends JFrame {
 			btnNewButton.setBackground(new Color(255, 255, 255));
 			btnNewButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					TelaHomePrincipal inicio =new TelaHomePrincipal();
-					inicio.setVisible(true);
+					TrocarTelas trocar = new TrocarTelas();
+					trocar.telaHome();
 					setVisible(false);
 				}
 			});
 			btnNewButton.setForeground(new Color(13, 20, 89));
-			btnNewButton.setBounds(125, 385, 93, 23);
+			btnNewButton.setBounds(125, 385, 105, 23);
 			telacadastro.add(btnNewButton);
 			
 			JButton btnNewButton_1 = new JButton("Finalizar Cadastro");
@@ -124,23 +124,15 @@ public class TelaCadastro extends JFrame {
 			btnNewButton_1.setBackground(new Color(255, 255, 255));
 			btnNewButton_1.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
-					MoldeAlunoController aluno = new MoldeAlunoController();
-					 aluno.setNome(txtNomeCompleto.getText());
-					 aluno.setEmail(tf_Email.getText());
-					 aluno.setSenha(new String (pf_Senha.getPassword()));
-					
-				    try {
-				    	AlunoRepositorio alunoRepositorio = new AlunoRepositorio();
-						alunoRepositorio.Cadastrar(aluno);
-					} catch (Exception e1) {
-						
-						e1.printStackTrace();
-					}	
-					TelaLogin login =new TelaLogin();
-					login.setVisible(true);
-					
+					ConsultasSql consulta = new ConsultasSql();
+					consulta.inserirDados(txtNomeCompleto, tf_Email, pf_Senha);
 					setVisible(false);
+					pf_Senha.setText("");
+					tf_Email.setText("");
+					txtNomeCompleto.setText("");
+				
 				}
+				
 			});
 			btnNewButton_1.setForeground(new Color(13, 20, 89));
 			btnNewButton_1.setBounds(470, 385, 149, 23);

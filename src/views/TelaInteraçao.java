@@ -6,6 +6,8 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
+import controller.ConsultasSql;
+import controller.TrocarTelas;
 import model.RepositorioConexao;
 import java.awt.Color;
 import javax.swing.JTextField;
@@ -41,7 +43,11 @@ import javax.swing.JProgressBar;
 public class TelaInteraçao extends JFrame {
 
 
-    protected DefaultTableModel tableModel;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	protected DefaultTableModel tableModel;
     protected DefaultTableModel model;
 	RepositorioConexao CONEXAO = new RepositorioConexao();
 	
@@ -75,8 +81,6 @@ public class TelaInteraçao extends JFrame {
 	    private JList<String> lista;
 	    private static JTable table;
 	    private JScrollPane scrollPane;
-		protected String link;
-		protected String assunto;
 		protected JProgressBar progressBar;
 
 
@@ -193,10 +197,8 @@ public class TelaInteraçao extends JFrame {
 	        table.addMouseListener(new MouseAdapter() {
 	        	@Override
 	        	public void mousePressed(MouseEvent e) {
-	        	
-	        		int selectedRow = table.getSelectedRow();
-	        	    link = table.getValueAt(selectedRow, 3).toString();
-	        	    assunto=table.getValueAt(selectedRow, 1).toString();
+	        		ConsultasSql consulta = new ConsultasSql();
+	        		consulta.pegarItemTabela(table);
 	        	}
 	        });
 	        scrollPane.setViewportView(table);
@@ -234,12 +236,13 @@ public class TelaInteraçao extends JFrame {
 	        JButton btnBaixa = new JButton("Baixar pdf");
 	        btnBaixa.addActionListener(new ActionListener() {
 	        	public void actionPerformed(ActionEvent e) {
+	        		ConsultasSql consulta= new ConsultasSql();
 	        		try {
-	        		    URL url = new URL(link); // Cria um objeto URL com a URL do arquivo a ser baixado
+	        		    URL url = new URL(consulta.link); // Cria um objeto URL com a URL do arquivo a ser baixado
 	        		    URLConnection conn = url.openConnection(); // Abre uma conexão com a URL
 	        		    int size = conn.getContentLength(); // Obtém o tamanho do arquivo em bytes
 	        		    InputStream in = url.openStream(); // Cria um objeto InputStream para ler o conteúdo da URL
-	        		    FileOutputStream out = new FileOutputStream(System.getProperty("user.home") + "/Downloads/"+assunto+".pdf"); // Cria um objeto FileOutputStream para gravar o conteúdo do arquivo baixado
+	        		    FileOutputStream out = new FileOutputStream(System.getProperty("user.home") + "/Downloads/"+consulta.assunto+".pdf"); // Cria um objeto FileOutputStream para gravar o conteúdo do arquivo baixado
 	        		    byte[] buffer = new byte[1024]; // Cria um buffer de bytes para armazenar os dados lidos da URL
 	        		    int len;
 	        		    int downloaded = 0;
@@ -263,8 +266,8 @@ public class TelaInteraçao extends JFrame {
 	        JButton btnsair = new JButton("Sair");
 	        btnsair.addActionListener(new ActionListener() {
 	        	public void actionPerformed(ActionEvent e) {
-	        		TelaHomePrincipal home = new TelaHomePrincipal();
-	        		home.setVisible(true);
+	        		TrocarTelas trocar =new TrocarTelas();
+	        		trocar.telaHome();
 	        		setVisible(false);
 	        	}
 	        });

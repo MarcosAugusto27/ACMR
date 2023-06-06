@@ -6,6 +6,9 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
+import controller.TrocarTelas;
+
 import javax.swing.JLabel;
 import java.awt.Font;
 import javax.swing.JRadioButton;
@@ -71,9 +74,8 @@ public class TelaCurso extends JFrame {
 		btnEntrar1.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		btnEntrar1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				TelaInteraçao interaçao;
-				interaçao = new TelaInteraçao();
-				interaçao.setVisible(true);
+				TrocarTelas trocar =new TrocarTelas();
+				trocar.telaInteraçao();
 				setVisible(false);
 				
 			}
@@ -84,8 +86,8 @@ public class TelaCurso extends JFrame {
 		btnVoltar1.setFont(new Font("Tahoma", Font.PLAIN, 15));
 		btnVoltar1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				TelaLogin login=new TelaLogin();
-				login.setVisible(true);
+				TrocarTelas trocar =new TrocarTelas();
+				trocar.telaLogin();
 				setVisible(false);
 				
 			}

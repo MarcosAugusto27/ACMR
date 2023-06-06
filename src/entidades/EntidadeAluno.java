@@ -1,10 +1,10 @@
-package controller;
+package entidades;
 
 
 
 import javax.swing.JOptionPane;
 
-public class MoldeAlunoController {
+public class EntidadeAluno {
 
     private Integer id;
     private String nome;

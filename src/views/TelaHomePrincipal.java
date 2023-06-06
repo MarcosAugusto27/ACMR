@@ -13,15 +13,20 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
-import javax.swing.LayoutStyle.ComponentPlacement;
-import javax.swing.border.MatteBorder;
 import javax.swing.border.EtchedBorder;
+
+import controller.TrocarTelas;
+
 import javax.swing.JTextPane;
 import javax.swing.ImageIcon;
 import javax.swing.JLayeredPane;
 
 public class TelaHomePrincipal extends JFrame {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private JPanel contentPane1;
 
 	/**
@@ -67,8 +72,8 @@ public class TelaHomePrincipal extends JFrame {
 		btnNewButton.setBounds(10, 384, 237, 37);
 		btnNewButton.addActionListener(new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
-	        TelaCadastro cadastro = new TelaCadastro();
-	        cadastro.setVisible(true);
+	        TrocarTelas trocar =new TrocarTelas();
+	        trocar.telaCadastro();
 	        setVisible(false);
 
 			}
@@ -92,8 +97,8 @@ public class TelaHomePrincipal extends JFrame {
 		btnEntrar.setBounds(413, 384, 237, 37);
 		btnEntrar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				TelaLogin login =new TelaLogin();
-				login.setVisible(true);
+				TrocarTelas trocar =new TrocarTelas();
+				trocar.telaLogin();
 				setVisible(false);
 			}
 		});
