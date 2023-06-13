@@ -4,13 +4,11 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
 import javax.swing.JOptionPane;
-
 import entidades.EntidadeAluno;
 import entidades.ExisteUsuario;
 
-public class AlunoRepositorio {
+public class AlunoRepositorio extends RepositorioConexao{
 	private  boolean podepassa;
 
 public AlunoRepositorio() throws SQLException, ClassNotFoundException {

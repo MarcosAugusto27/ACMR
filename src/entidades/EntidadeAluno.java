@@ -10,6 +10,9 @@ public class EntidadeAluno {
     private String nome;
     private String senha;
     private String email;
+    public boolean passaNome;
+    public boolean passaEmail;
+    public boolean passaSenha;
  
  
 
@@ -30,8 +33,9 @@ public class EntidadeAluno {
             JOptionPane.showMessageDialog(null, "O campo nome não pode ser vazio!!");
         } else {
             this.nome = nome;
+            passaNome=true;
         }
-        this.nome = nome;
+       
     }
 
 	public String getSenha() {
@@ -43,8 +47,9 @@ public class EntidadeAluno {
             JOptionPane.showMessageDialog(null, "O campo senha não pode ser vazio!!");
         } else {
             this.senha = senha;
+            passaSenha=true;
         }
-        this.senha = senha;
+       
 	}
 
 	public String getEmail() {
@@ -56,8 +61,9 @@ public class EntidadeAluno {
             JOptionPane.showMessageDialog(null, "O campo email não pode ser vazio!!");
         } else {
             this.email = email;
+            passaEmail=true;
         }
-		this.email = email;
+		
 	}
 
 }

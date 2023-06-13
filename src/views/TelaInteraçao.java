@@ -19,7 +19,6 @@ import javax.swing.JTable;
 
 import java.awt.event.ActionListener;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -28,13 +27,6 @@ import javax.swing.JList;
 import java.awt.Font;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.net.URLConnection;
-
-
 import javax.swing.JLabel;
 import javax.swing.JProgressBar;
 
@@ -50,6 +42,8 @@ public class TelaInteraçao extends JFrame {
 	protected DefaultTableModel tableModel;
     protected DefaultTableModel model;
 	RepositorioConexao CONEXAO = new RepositorioConexao();
+	ConsultasSql consulta = new ConsultasSql();
+	 private DefaultTableModel tblModel;
 	
 	
 
@@ -82,6 +76,9 @@ public class TelaInteraçao extends JFrame {
 	    private static JTable table;
 	    private JScrollPane scrollPane;
 		protected JProgressBar progressBar;
+		protected String link;
+		protected String assunto;
+		protected String[] row;
 
 
 
@@ -107,28 +104,14 @@ public class TelaInteraçao extends JFrame {
 	        	public void actionPerformed(ActionEvent e) {
 	        		
 	        		 String pesquisa = txtPesquisa.getText();
-	        	      DefaultListModel<String> model = new DefaultListModel<String>();
-	        	        try {
-	        	           
-	        	        	Connection con= RepositorioConexao.conectaBD();
-	        	            Statement stmt = con.createStatement();
-	        	            ResultSet rs = stmt.executeQuery("SELECT * FROM Disciplinas WHERE disciplina LIKE '%" + pesquisa + "%'"
-	        	            		+ "OR assunto LIKE '%" + pesquisa + "%';");
-	        	           lista.setVisible(true);
-	        	            while (rs.next()) {
-	        	                String name = rs.getString("disciplina");
-	        	                String assunto = rs.getString("assunto");
-	        	                model.addElement(name);
-	        	                model.addElement(assunto);
-	        	            }
-	        	            lista.setModel(model);
-	        	            rs.close();
-	        	            stmt.close();
-	        	            con.close();
-	        	            txtPesquisa.setText("");
-	        	        } catch (SQLException ex) {
-	        	            ex.printStackTrace();
-	        	        }
+	        	     DefaultListModel<String> model = new DefaultListModel<String>();
+	        	     consulta.buscarItemTabela(pesquisa); 
+	        	     lista.setVisible(true);
+	        	     model.addElement(consulta.getListaDiscplina());
+	        	     model.addElement(consulta.getListaAssunto());
+	        	     lista.setModel(model);
+	        	     txtPesquisa.setText("");
+	        	       
 	        	    }
 	        		
 	        	
@@ -146,38 +129,11 @@ public class TelaInteraçao extends JFrame {
 	        	public void mousePressed(MouseEvent e) {
 	        		
 	        		String linha=lista.getSelectedValue().toString();
-	        		
-	        		try {
-						Connection con= RepositorioConexao.conectaBD();
-						String sql="select * from Disciplinas where disciplina = ? or assunto = ?;" ;
-						PreparedStatement stmt = con.prepareStatement(sql);
-						stmt.setString(1,linha);
-						stmt.setString(2,linha);
-						
-						ResultSet rs = stmt.executeQuery();
-						lista.setVisible(false);
-						while(rs.next() ) {
-							String disciplina= rs.getString("disciplina");
-							String assunto= rs.getString("assunto");
-							String datacadastro= rs.getString("datacdastro");
-							String linkPDF= rs.getString("linkPDF");
+	        		consulta.pegarDadosLista(linha);
+	        		tblModel=(DefaultTableModel)table.getModel();
+	        		tblModel.addRow(consulta.montandoTabela());
 							
-							String tbData[]= {disciplina,assunto,datacadastro,linkPDF};
-							DefaultTableModel tblModel=(DefaultTableModel)table.getModel();
-							tblModel.addRow(tbData);
-							
-						 
-						}
-						
-						 stmt.close();
-					     con.close();
-					     rs.close();
-					}catch (SQLException e1) {
-						e1.printStackTrace();
-					}
-	        		
 	        		lista.setVisible(false);
-	        		
 	        	}
 
 	        });
@@ -197,8 +153,9 @@ public class TelaInteraçao extends JFrame {
 	        table.addMouseListener(new MouseAdapter() {
 	        	@Override
 	        	public void mousePressed(MouseEvent e) {
-	        		ConsultasSql consulta = new ConsultasSql();
-	        		consulta.pegarItemTabela(table);
+	        		int selectedRow = table.getSelectedRow();
+	        		 link = table.getValueAt(selectedRow, 3).toString();
+	        		 assunto=table.getValueAt(selectedRow, 1).toString();
 	        	}
 	        });
 	        scrollPane.setViewportView(table);
@@ -236,27 +193,8 @@ public class TelaInteraçao extends JFrame {
 	        JButton btnBaixa = new JButton("Baixar pdf");
 	        btnBaixa.addActionListener(new ActionListener() {
 	        	public void actionPerformed(ActionEvent e) {
-	        		ConsultasSql consulta= new ConsultasSql();
-	        		try {
-	        		    URL url = new URL(consulta.link); // Cria um objeto URL com a URL do arquivo a ser baixado
-	        		    URLConnection conn = url.openConnection(); // Abre uma conexão com a URL
-	        		    int size = conn.getContentLength(); // Obtém o tamanho do arquivo em bytes
-	        		    InputStream in = url.openStream(); // Cria um objeto InputStream para ler o conteúdo da URL
-	        		    FileOutputStream out = new FileOutputStream(System.getProperty("user.home") + "/Downloads/"+consulta.assunto+".pdf"); // Cria um objeto FileOutputStream para gravar o conteúdo do arquivo baixado
-	        		    byte[] buffer = new byte[1024]; // Cria um buffer de bytes para armazenar os dados lidos da URL
-	        		    int len;
-	        		    int downloaded = 0;
-	        		    while ((len = in.read(buffer)) > 0) { // Lê os dados da URL em blocos de 1024 bytes e grava-os no arquivo de saída
-	        		        out.write(buffer, 0, len);
-	        		        downloaded += len;
-	        		        int progress = (int) ((downloaded / (float) size) * 100); // Calcula o progresso do download em porcentagem
-	        		        progressBar.setValue(progress); // Atualiza a barra de progresso com o valor do progresso atual
-	        		    }
-	        		    in.close(); // Fecha o objeto InputStream
-	        		    out.close(); // Fecha o objeto FileOutputStream
-	        		} catch (IOException e1) { // Captura qualquer exceção que possa ocorrer durante o download ou gravação do arquivo
-	        		    e1.printStackTrace(); // Imprime a pilha de exceções para depuração
-	        		}
+	        	 consulta.caminhoPDF(link, assunto, progressBar);
+	        		
 	        	}
 	        });
 	        btnBaixa.setFont(new Font("Tahoma", Font.PLAIN, 15));
@@ -289,42 +227,7 @@ public class TelaInteraçao extends JFrame {
 	        lblNewLabel_1.setFont(new Font("Tahoma", Font.PLAIN, 17));
 	        lblNewLabel_1.setForeground(new Color(255, 255, 255));
 	        lblNewLabel_1.setBounds(273, 396, 182, 23);
-	        contentPane.add(lblNewLabel_1);
-
-	    }
-
-
-
-		private static void listaDePequisa() {
-
-			try {
-				Connection con= RepositorioConexao.conectaBD();
-				String sql="select * from Disciplinas ;" ;
-				Statement stmt = con.createStatement();
-				ResultSet rs = stmt.executeQuery(sql);
-				
-				while(rs.next() ) {
-					String disciplina= rs.getString("disciplina");
-					String assunto= rs.getString("assunto");
-					String datacadastro= rs.getString("datacdastro");
-					String linkPDF= rs.getString("linkPDF");
-					
-					String tbData[]= {disciplina,assunto,datacadastro,linkPDF};
-					DefaultTableModel tblModel=(DefaultTableModel)table.getModel();
-					tblModel.addRow(tbData);
-					
-				 
-				}
-				 stmt.close();
-			     con.close();
-			     rs.close();
-			}catch (SQLException e1) {
-				e1.printStackTrace();
-			}
-			
+	        contentPane.add(lblNewLabel_1);		
 			
 		}
 }
-
-
-

@@ -126,7 +126,9 @@ public class TelaCadastro extends JFrame {
 				public void actionPerformed(ActionEvent e) {
 					ConsultasSql consulta = new ConsultasSql();
 					consulta.inserirDados(txtNomeCompleto, tf_Email, pf_Senha);
+					if(consulta.getPodeTrocar()==true) {
 					setVisible(false);
+					}
 					pf_Senha.setText("");
 					tf_Email.setText("");
 					txtNomeCompleto.setText("");
